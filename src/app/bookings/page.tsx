@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import { Plus, Search, Filter, Download, Phone, Calendar, IndianRupee, X, RefreshCw } from 'lucide-react'
 import { BookingModal } from '@/components/booking/BookingModal'
 import { supabase } from '@/lib/supabase'
@@ -15,7 +15,7 @@ import { useSearchParams } from 'next/navigation'
 const STATUS_OPTS = ['', 'confirmed', 'completed', 'cancelled'] as const
 const PAYMENT_OPTS = ['', 'paid', 'pending', 'failed', 'refunded'] as const
 
-export default function BookingsPage() {
+function BookingsPageInner() {
   const searchParams = useSearchParams()
   const [bookings, setBookings]       = useState<Booking[]>([])
   const [turfs, setTurfs]             = useState<Turf[]>([])
@@ -385,5 +385,13 @@ export default function BookingsPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function BookingsPage() {
+  return (
+    <Suspense fallback={<div className="animate-pulse text-slate-500 p-8">Loading bookings…</div>}>
+      <BookingsPageInner />
+    </Suspense>
   )
 }
